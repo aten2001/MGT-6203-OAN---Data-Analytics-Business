@@ -103,27 +103,23 @@ hist(advertising$Daily.Internet.Usage)
 
 
 #Age vs Clicked On Ad
-boxplot(Age~Clicked.on.Ad,data=advertising, main="Age vs Clicked On Ad",
-        xlab="Age", ylab="Clicked On Ad")
+ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Age)) + geom_boxplot() + labs(title = "Age vs Clicked On Ad")
 
 #Area Income vs Clicked On Ad
-boxplot(Area.Income~Clicked.on.Ad,data=advertising, main="Area Income vs Clicked On Ad",
-        xlab="Area Income", ylab="Clicked On Ad")
+
+ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Area.Income)) + geom_boxplot() + labs(title = "Area Income vs Clicked On Ad")
 
 #Daily Internet Usage vs Clicked On Ad
-boxplot(Daily.Internet.Usage~Clicked.on.Ad,data=advertising, main="Daily Internet Usage vs Clicked On Ad",
-        xlab="Daily Internet Usage", ylab="Clicked On Ad")
+ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Daily.Internet.Usage)) + geom_boxplot() + labs(title = "Daily Internet Usage vs Clicked On Ad")
 
 #Daily Time Spent on Site vs Clicked On Ad
-boxplot(Daily.Time.Spent.on.Site~Clicked.on.Ad,data=advertising, main="Daily Time Spent on Site vs Clicked On Ad",
-        xlab="Daily Time Spent on Site", ylab="Clicked On Ad")
+ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Daily.Time.Spent.on.Site)) + geom_boxplot() + labs(title = "Daily Time Spent on Site vs Clicked On Ad")
 
 #d) Based on our preliminary boxplots, would you expect an older person to be more likely to 
 #click on the ad than someone younger? [2 points]
 
 #Age vs Clicked On Ad
-boxplot(Age~Clicked.on.Ad,data=advertising, main="Age vs Clicked On Ad",
-        xlab="Age", ylab="Clicked On Ad")
+ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Age)) + geom_boxplot()
 
 ## Looking at the Age vs Clicked On Ad Box Plot below, the median age of users clicking the Ad is higher than the Median age of users 
 #not clicking the AD.The maximum age for users clicking the Ad is also higher than that of the ones not clicking the AD when outliers are ignored.
@@ -136,18 +132,24 @@ boxplot(Age~Clicked.on.Ad,data=advertising, main="Age vs Clicked On Ad",
 #1. Make a scatter plot for Area.Income against Age. 
 #Separate the datapoints by different shapes based on if the datapoint has clicked on the ad or not.
 
-x <- advertising$Age
-y <- advertising$Area.Income
+ggplot(data = advertising, mapping = aes(x = Age, y = Area.Income)) + geom_point(aes(shape = Clicked.on.Ad, color = Clicked.on.Ad))  + labs(title = "Age Vs. Area Income")
+
+#2. Based on this plot, would you expect a 31-year-old person with an Area income of $62,000 to click on the ad or not?
+# NO . Looking at the scatterplot, we observe that from the Age Group between 30 to 35 and income above 60,000, the number of clicks 
+# ad has reduced. So I would not expect a 31-year-old person with an Area income of $62,000 to click on the ad.
+
+#Q.6
+#Part (b)
+#1. Similar to part a), create a scatter plot for Daily.Time.Spent.on.Site against Age. 
+#Separate the datapoints by different shapes based on if the datapoint has clicked on the ad or not.
 
 
+ggplot(data = advertising, mapping = aes(x = Age, y = Daily.Time.Spent.on.Site)) + geom_point(aes(shape = Clicked.on.Ad, color = Clicked.on.Ad))  + labs(title = "Age Vs. Daily Time Spent on Site")
 
-plot(x, y, main="Age vs. Area Income",
-     xlab="Age ", ylab="Area Income ",pch = 19,col = c("red", "green")[advertising$Clicked.on.Ad])
 
-if (!require(ggplot2)) install.packages("ggplot2")
-library(ggplot2)
-ggplot(advertising, aes(x=Age, y=Area.Income)) + geom_point()
-
+#2. Based on this plot, 
+#would you expect a 50-year-old person who spends 60 minutes daily on the site to click on the ad or not?
+#Yes.
 
 
 
