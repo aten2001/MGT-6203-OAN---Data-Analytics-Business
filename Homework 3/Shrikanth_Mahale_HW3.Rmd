@@ -2,7 +2,9 @@
 title: "Shrikanth_Mahale_HW3_Part2"
 author: "Shrikanth Mahale"
 date: "4/11/2020"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -17,7 +19,9 @@ dplyr - Data Wrangling Package. Check R Learning Guide for resources to quickly 
 if (!require(dplyr)) install.packages("dplyr")
 library(dplyr)
 if (!require(tidyverse)) install.packages("tidyverse")
+library(tidyverse)
 if (!require(DataExplorer)) install.packages("DataExplorer")
+library(DataExplorer)
 if (!require(ggplot2)) install.packages("ggplot2")
 library(ggplot2)
 ```
@@ -62,18 +66,16 @@ data <- data %>% mutate(ROAS = ifelse(Spent !=0.00,round((5.00*Total_Conversion 
 data1 <- data %>%
   filter(ROAS!=Inf, interest %in% c('15','21','101'))%>%
   select(interest,gender,ROAS)#%>%
-data1
 ggplot(data = data1, aes(x=as.factor(interest), y=ROAS)) +geom_boxplot(aes(fill=as.factor(gender)))+ scale_y_log10()+ xlab("Interest") + ylab("ROAS")+guides(fill=guide_legend(title="Gender"))
 data2 <- data1 %>%
   filter(interest=='15', gender=='0')
 boxplot(data2$ROAS)
-data2
-p <- ggplot(data = data1, aes(x=as.factor(interest), y=as.factor(ROAS))) + geom_boxplot(aes(fill=gender)) 
-p <- p + geom_jitter()
-p <- p + facet_wrap( ~ interest, scales="free")
-p <- p + xlab("x-axis") + ylab("y-axis") + ggtitle("Title")
-p <- p + guides(fill=guide_legend(title="Legend_Title"))
-p 
+dataplot <- ggplot(data = data1, aes(x=as.factor(interest), y=as.factor(ROAS))) + geom_boxplot(aes(fill=gender)) 
+dataplot <- dataplot + geom_jitter()
+dataplot <- dataplot + facet_wrap( ~ interest, scales="free")
+dataplot <- dataplot + xlab("x-axis") + ylab("y-axis") + ggtitle("Title")
+dataplot <- dataplot + guides(fill=guide_legend(title="Legend_Title"))
+dataplot 
 ```
 
 Q.4 Summarize the median and mean of ROAS by genders when campign_id == 1178.
@@ -101,6 +103,8 @@ if (!require(ROCR)) install.packages("ROCR")
 library(ROCR)
 if (!require(caret)) install.packages("caret")
 library(caret)
+if (!require(e1071)) install.packages("e1071")
+library(e1071)
 if (!require(corrplot)) install.packages("corrplot")
 library(corrplot)
 ```
@@ -121,40 +125,47 @@ a) We aim to explore the dataset so that we can better choose a model to impleme
 
 
 ```{r}
-hist(advertising$Area.Income)
-hist(advertising$Daily.Internet.Usage)
-hist(advertising$Daily.Time.Spent.on.Site)
+hist(advertising$Area.Income, xlab = "Area Income", main = "Histogram of Area Income")
+hist(advertising$Daily.Internet.Usage, xlab = "Daily Internet Usage", main = "Histogram of Daily Internet Usage")
+hist(advertising$Daily.Time.Spent.on.Site, xlab = "Daily Time Spent on Site", main = "Histogram of Daily Time Spent on Site")
 ```
 
 b) Again on the track of exploring the dataset, plot at least 2 bar charts reflecting the counts of different values for different variables. Note it is acceptable to plot more than 2. [1 point]
+
+```{r 5b}
+ggplot(advertising, aes(x = Age)) +geom_bar()+ labs(title = "Bar Plot of Age")
+ggplot(advertising, aes(x = Male)) +geom_bar()+ labs(title = "Bar Plot of Male")
+ggplot(advertising, aes(x = Clicked.on.Ad)) +geom_bar()+ labs(title = "Bar Plot of Clicked on Ad")
+```
 
 c) Plot boxplots for Age, Area.Income, Daily.Internet.Usage and Daily.Time.Spent.on.Site separated by the variable Clicked.on.Ad. To clarify, we want to create 4 plots, each of which has 2 boxplots: 1 for people who clicked on the ad, one for those who didn’t. [2 points]
 
 ```{r}
 #Age vs Clicked On Ad
-ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Age)) + geom_boxplot() + labs(title = "Age vs Clicked On Ad")
+ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Age)) + geom_boxplot() + labs(title = "Age vs Clicked On Ad", x = "Clicked on Ad")
 
 #Area Income vs Clicked On Ad
 
-ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Area.Income)) + geom_boxplot() + labs(title = "Area Income vs Clicked On Ad")
+ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Area.Income)) + geom_boxplot() + labs(title = "Area Income vs Clicked On Ad", x = "Clicked on Ad",y = "Area Income")
 
 #Daily Internet Usage vs Clicked On Ad
-ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Daily.Internet.Usage)) + geom_boxplot() + labs(title = "Daily Internet Usage vs Clicked On Ad")
+ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Daily.Internet.Usage)) + geom_boxplot() + labs(title = "Daily Internet Usage vs Clicked On Ad", x = "Clicked on Ad",y = "Daily Internet Usage")
 
 #Daily Time Spent on Site vs Clicked On Ad
-ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Daily.Time.Spent.on.Site)) + geom_boxplot() + labs(title = "Daily Time Spent on Site vs Clicked On Ad")
+ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Daily.Time.Spent.on.Site)) + geom_boxplot() + labs(title = "Daily Time Spent on Site vs Clicked On Ad", x = "Clicked on Ad",y = "Daily Time Spent on Site")
 
-#d) Based on our preliminary boxplots, would you expect an older person to be more likely to 
-#click on the ad than someone younger? [2 points]
 
-#Age vs Clicked On Ad
-ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Age)) + geom_boxplot()
 ```
 
 
 d) Based on our preliminary boxplots, would you expect an older person to be more likely to click on the ad than someone younger? [2 points]
 
 Answer: Looking at the Age vs Clicked On Ad Box Plot below, the median age of users clicking the Ad is higher than the Median age of users not clicking the AD.The maximum age for users clicking the Ad is also higher than that of the ones not clicking the AD when outliers are ignored.From this we can conclude that the tendency of older person clicking the AD is higher.
+
+```{r}
+#Age vs Clicked On Ad
+ggplot(data = advertising, mapping = aes(x = Clicked.on.Ad, y = Age)) + geom_boxplot()+ labs(title = "Age vs Clicked On Ad", x = "Clicked on Ad")
+```
 
 
 
@@ -165,7 +176,7 @@ Part (a) [3 points]
 1. Make a scatter plot for Area.Income against Age. Separate the datapoints by different shapes based on if the datapoint has clicked on the ad or not.
 
 ```{r}
-ggplot(data = advertising, mapping = aes(x = Age, y = Area.Income)) + geom_point(aes(shape = Clicked.on.Ad, color = Clicked.on.Ad))  + labs(title = "Age Vs. Area Income")
+ggplot(data = advertising, mapping = aes(x = Age, y = Area.Income)) + geom_point(aes(shape = Clicked.on.Ad, color = Clicked.on.Ad))  + labs(title = "Age Vs. Area Income",y = "Area Income")
 ```
 
 2. Based on this plot, would you expect a 31-year-old person with an Area income of $62,000 to click on the ad or not?
@@ -176,7 +187,7 @@ Answer:  NO . Looking at the scatterplot, we observe that from the Age Group bet
 Part (b) [3 points]
 1. Similar to part a), create a scatter plot for Daily.Time.Spent.on.Site against Age. Separate the datapoints by different shapes based on if the datapoint has clicked on the ad or not.
 ```{r}
-ggplot(data = advertising, mapping = aes(x = Age, y = Daily.Time.Spent.on.Site)) + geom_point(aes(shape = Clicked.on.Ad, color = Clicked.on.Ad))  + labs(title = "Age Vs. Daily Time Spent on Site")
+ggplot(data = advertising, mapping = aes(x = Age, y = Daily.Time.Spent.on.Site)) + geom_point(aes(shape = Clicked.on.Ad, color = Clicked.on.Ad))  + labs(title = "Age Vs. Daily Time Spent on Site" ,y = "Daily Time Spent on Site")
 
 ```
 
@@ -201,18 +212,56 @@ ad4=advertising
 ad4$Age =as.factor(ad4$Age)
 ad4$Male=as.factor(ad4$Male)
 ad_binarized_tbl <- ad4 %>%
-  #select(Daily.Time.Spent.on.Site,as.factor(Age),Area.Income,Daily.Internet.Usage,Ad.Topic.Line,City,as.factor(Male),Country,Timestamp,Clicked.on.Ad)
   binarize()
-
 ad_binarized_corr_tbl <- ad_binarized_tbl %>%
   correlate(Clicked.on.Ad__1)
-
 ad_binarized_corr_tbl
-#Clicked.on.Ad__1 
 ad_binarized_corr_tbl %>%
   plot_correlation_funnel()
 
 ```
+
+
+Part (b) [2 points]
+
+1. Based on the generated correlation funnel, choose the 4 most covarying variables (with having clicked the advert) and run a logistic regression model for Clicked.on.Ad using these 4 variables.
+The 4 most covarying variable are
+1) Daily.Time.Spent.on.Site
+2) Age
+3) Area.Income
+4) Daily.Internet.Usage
+```{r}
+advertising_logistic_regression <- glm(data=advertising,Clicked.on.Ad ~ Daily.Time.Spent.on.Site+Age+Area.Income+Daily.Internet.Usage, family = 'binomial')
+
+```
+
+
+2. Output the summary of this model.
+
+```{r}
+summary(advertising_logistic_regression)
+```
+Q.8 [4 points]
+
+Now that we have created our logistic regression model using variables of significance, we must test the model.
+When testing such models, it is always recommended to split the data into a training (from which we build the model) and test (on which we test the model) set. This is done to avoid bias, as testing the model on the data from which it is originally built from is unrepresentative of how the model will perform on new data.
+That said, for the case of simplicity, test the model on the full original dataset.
+Use type ="response" to ensure we get the predicted probabilities of clicking the advert
+Append the predicted probabilities to a new column in the original dataset or simply to a new data frame. The choice is up to you, but ensure you know how to reference this column of probabilities.
+Using a threshold of 80% (0.8), create a new column in the original dataset that represents if the model predicts a click or not for that person. Note this means probabilities above 80% should be treated as a click prediction.
+Now using the caret package, create a confusion matrix for the model predictions and actual clicks. Note you do not need to graph or plot this confusion matrix.
+How many false-negative occurrences do you observe? Recall false negative means the instances where the model predicts the case to be false when in reality it is true. For this example, this refers to cases where the ad is clicked but the model predicts that it isn't
+
+```{r}
+advertising$predictreg =predict(advertising_logistic_regression, advertising, type="response")
+advertising$predictvalue <- ifelse(advertising$predictreg>0.8, 1,0)
+xtab <- table(advertising$Clicked.on.Ad,advertising$predictvalue)
+confusionMatrix(xtab)
+```
+
+
+
+
 
 
 
