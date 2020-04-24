@@ -1,4 +1,4 @@
-setwd("C:\Users\Shrikanth\Documents\GitHub\MGT-6203-OAN---Data-Analytics-Business\Homework 3")
+setwd("C:/Users/D100793/Desktop/Georgia Tech/MGT 6203 OAN Data Analytics Business/Homework 3")
 
 #DataExplorer package for exploratory data analysis 
 #Useful Documentation- https://cran.r-project.org/web/packages/DataExplorer/vignettes/dataexplorer-intro.html
@@ -151,32 +151,5 @@ ggplot(data = advertising, mapping = aes(x = Age, y = Daily.Time.Spent.on.Site))
 #would you expect a 50-year-old person who spends 60 minutes daily on the site to click on the ad or not?
 #Yes.
 
-#Q.7
-
-#Part (a) [2 points]
-
-#1. Now that we have done some exploratory data analysis to get a better understanding of our raw data,
-#we can begin to move towards designing a model to predict advert clicks.
-
-#2. Generate a correlation funnel (using the correlation funnel package) to see which 
-#of the variable in the dataset have the most correlation with having clicked the advert.
-
-head(advertising,1)
 
 
-glimpse(advertising)
-
-ad4=advertising
-ad4$Age =as.factor(ad4$Age)
-ad4$Male=as.factor(ad4$Male)
-ad_binarized_tbl <- ad4 %>%
-  #select(Daily.Time.Spent.on.Site,as.factor(Age),Area.Income,Daily.Internet.Usage,Ad.Topic.Line,City,as.factor(Male),Country,Timestamp,Clicked.on.Ad)
-  binarize()
-
-ad_binarized_corr_tbl <- ad_binarized_tbl %>%
-  correlate(Clicked.on.Ad__1)
-
-ad_binarized_corr_tbl
-#Clicked.on.Ad__1 
-ad_binarized_corr_tbl %>%
-  plot_correlation_funnel()
